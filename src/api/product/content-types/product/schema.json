@@ -1,0 +1,75 @@
+{
+  "kind": "collectionType",
+  "collectionName": "products",
+  "info": {
+    "singularName": "product",
+    "pluralName": "products",
+    "displayName": "Product",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Title": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "Description": {
+      "type": "text"
+    },
+    "categories": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::category.category",
+      "mappedBy": "products"
+    },
+    "Image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "Price": {
+      "type": "decimal",
+      "required": true,
+      "unique": true
+    },
+    "Size": {
+      "type": "enumeration",
+      "enum": [
+        "XS",
+        "S",
+        "XL",
+        "M",
+        "XXL"
+      ],
+      "required": true
+    },
+    "Color": {
+      "type": "enumeration",
+      "enum": [
+        "White",
+        "Creame",
+        "Gold"
+      ]
+    },
+    "Quantity": {
+      "type": "integer",
+      "required": true,
+      "unique": true,
+      "default": 1
+    },
+    "Rating": {
+      "type": "integer",
+      "default": 4
+    }
+  }
+}
