@@ -40,7 +40,7 @@
     "Price": {
       "type": "decimal",
       "required": true,
-      "unique": true
+      "unique": false
     },
     "Size": {
       "type": "enumeration",
@@ -64,7 +64,7 @@
     "Quantity": {
       "type": "integer",
       "required": true,
-      "unique": true,
+      "unique": false,
       "default": 1
     },
     "Rating": {
