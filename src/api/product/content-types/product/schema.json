@@ -20,12 +20,6 @@
     "Description": {
       "type": "text"
     },
-    "categories": {
-      "type": "relation",
-      "relation": "manyToMany",
-      "target": "api::category.category",
-      "mappedBy": "products"
-    },
     "Image": {
       "type": "media",
       "multiple": true,
@@ -70,6 +64,29 @@
     "Rating": {
       "type": "integer",
       "default": 4
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "clothing",
+        "textiles",
+        "couture",
+        "accesories"
+      ]
+    },
+    "categories": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::category.category",
+      "inversedBy": "products"
+    },
+    "tag": {
+      "type": "enumeration",
+      "enum": [
+        "trending",
+        "new",
+        "outofstock"
+      ]
     }
   }
 }
