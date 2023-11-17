@@ -68,11 +68,30 @@
     "address": {
       "type": "string"
     },
-    "lastname": {
+    "lastName": {
       "type": "string"
     },
     "dob": {
       "type": "date"
+    },
+    "firstName": {
+      "type": "string"
+    },
+    "profileImage": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": false
+    },
+    "wishlist": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::wishlist.wishlist",
+      "mappedBy": "users_permissions_user"
     }
   }
 }
