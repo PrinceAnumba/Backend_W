@@ -86,12 +86,6 @@
       ],
       "type": "media",
       "multiple": false
-    },
-    "wishlist": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::wishlist.wishlist",
-      "mappedBy": "users_permissions_user"
     }
   }
 }

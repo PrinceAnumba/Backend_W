@@ -12,16 +12,14 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "Name": {
-      "type": "string",
-      "required": true,
-      "unique": true
+    "name": {
+      "type": "string"
     },
     "products": {
       "type": "relation",
-      "relation": "manyToMany",
+      "relation": "oneToMany",
       "target": "api::product.product",
-      "mappedBy": "categories"
+      "mappedBy": "category"
     }
   }
 }

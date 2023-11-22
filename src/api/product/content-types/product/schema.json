@@ -74,12 +74,6 @@
         "accesories"
       ]
     },
-    "categories": {
-      "type": "relation",
-      "relation": "manyToMany",
-      "target": "api::category.category",
-      "inversedBy": "products"
-    },
     "tag": {
       "type": "enumeration",
       "enum": [
@@ -87,6 +81,12 @@
         "new",
         "outofstock"
       ]
+    },
+    "category": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::category.category",
+      "inversedBy": "products"
     }
   }
 }
