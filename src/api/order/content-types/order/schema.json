@@ -20,6 +20,9 @@
     },
     "email": {
       "type": "string"
+    },
+    "phone_number": {
+      "type": "biginteger"
     }
   }
 }

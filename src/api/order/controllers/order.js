@@ -10,12 +10,11 @@ const { createCoreController } = require("@strapi/strapi").factories;
 
 module.exports = createCoreController("api::order.order", ({ strapi }) => ({
   async create(ctx) {
-    const { email, products } = ctx.request.body;
-    console.log(process.env.STRIPE_KEY);
+    const { email, products, phoneNumber } = ctx.request.body;
+
     if (!products || !Array.isArray(products)) {
       ctx.response.status = 400; // Bad Request
-      const dat = console.log(products);
-      return { error: "Invalid products data", dat };
+      return { error: "Invalid products data" };
     }
 
     const lineItems = await Promise.all(
@@ -36,30 +35,43 @@ module.exports = createCoreController("api::order.order", ({ strapi }) => ({
         };
       })
     );
+
     try {
       const session = await stripe.checkout.sessions.create({
         mode: "payment",
         success_url: `${process.env.CLIENT_URL}/OnlineShop/PaymentSuccess`,
         cancel_url: `${process.env.CLIENT_URL}?success=false`,
-        line_items: lineItems, // Corrected field name
+        line_items: lineItems,
         shipping_address_collection: {
           allowed_countries: ["US", "CA", "TG", "NG", "FR", "GH"],
         },
-        payment_method_types: ["card"], // Corrected field name
+        phone_number_collection: {
+          enabled: true,
+        },
+        customer_email: email,
+        payment_method_types: ["card"],
+      });
+
+      // Listen for the checkout.session.completed webhook event
+      stripe.on("checkout.session.completed", async (event) => {
+        const session = event.data;
+        const customerEmail = session.customer_details;
+        console.log(customerEmail);
       });
 
       await strapi.service("api::order.order").create({
         data: {
           products: products,
           stripeId: session.id,
-          email: ctx.request.body.email
+          email: email, // Store the customer email in the order object
+          phone_number: phoneNumber, // Store the customer's phone number in the order object
         },
       });
 
       return { stripeSession: session };
     } catch (err) {
       ctx.response.status = 500;
-      return err;
+      return console.log(err);
     }
   },
 }));
