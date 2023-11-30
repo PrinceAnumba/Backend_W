@@ -1,0 +1,37 @@
+{
+  "kind": "collectionType",
+  "collectionName": "customizations",
+  "info": {
+    "singularName": "customization",
+    "pluralName": "customizations",
+    "displayName": "Customization",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "email": {
+      "type": "string",
+      "required": true
+    },
+    "measurements": {
+      "type": "json"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "image_link": {
+      "type": "string"
+    }
+  }
+}
