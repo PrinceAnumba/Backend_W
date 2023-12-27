@@ -31,6 +31,9 @@ $RECYCLE.BIN/
 *.msm
 *.msp
 
+# .gitignore
+/config/custom.js
+
 
 ############################
 # Packages

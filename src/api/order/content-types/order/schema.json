@@ -12,17 +12,60 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "stripeId": {
+    "transaction_id": {
       "type": "text"
     },
-    "products": {
-      "type": "json"
-    },
-    "email": {
+    "customer_email": {
       "type": "string"
     },
-    "phone_number": {
+    "customer_phone_number": {
       "type": "biginteger"
+    },
+    "amount": {
+      "type": "decimal"
+    },
+    "customer_address": {
+      "type": "string"
+    },
+    "customer_name": {
+      "type": "string"
+    },
+    "customer_surname": {
+      "type": "string"
+    },
+    "customer_city": {
+      "type": "string"
+    },
+    "customer_country": {
+      "type": "string"
+    },
+    "customer_state": {
+      "type": "string"
+    },
+    "message": {
+      "type": "text"
+    },
+    "cart": {
+      "type": "json"
+    },
+    "payment_method": {
+      "type": "string"
+    },
+    "currency": {
+      "type": "string"
+    },
+    "client_transaction_id": {
+      "type": "string"
+    },
+    "paid": {
+      "type": "boolean",
+      "default": false
+    },
+    "paid_date": {
+      "type": "datetime"
+    },
+    "payment_status": {
+      "type": "string"
     }
   }
 }

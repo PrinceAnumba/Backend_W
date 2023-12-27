@@ -1,6 +1,5 @@
-const stripe = require("stripe")(process.env.STRIPE_KEY);
-
 ("use strict");
+const axios = require("axios");
 
 /**
  * order controller
@@ -10,68 +9,141 @@ const { createCoreController } = require("@strapi/strapi").factories;
 
 module.exports = createCoreController("api::order.order", ({ strapi }) => ({
   async create(ctx) {
-    const { email, products, phoneNumber } = ctx.request.body;
+    const {
+      transaction_id,
+      amount,
+      currency,
+      description,
+      customer_name,
+      customer_surname,
+      customer_phone_number,
+      customer_email,
+      customer_address,
+      customer_city,
+      customer_country,
+      customer_state,
+      customer_zip_code,
+      message,
+      cart,
+    } = ctx.request.body; // Get form data from request body
 
-    if (!products || !Array.isArray(products)) {
-      ctx.response.status = 400; // Bad Request
-      return { error: "Invalid products data" };
-    }
+    // Validate form data (amount, currency, etc.)
 
-    const lineItems = await Promise.all(
-      products.map(async (product) => {
-        const item = await strapi
-          .service("api::product.product")
-          .findOne(product.id);
-        console.log(item);
-        return {
-          price_data: {
-            currency: "xof",
-            product_data: {
-              name: item.Title,
-            },
-            unit_amount: item.Price,
-          },
-          quantity: product.quantity,
-        };
-      })
-    );
+    // Prepare CinetPay request data
+    const cnetpayData = {
+      // Include relevant data from form (amount, currency, etc.)
+      transaction_id,
+      amount,
+      currency,
+      description,
+      customer_name,
+      customer_surname,
+      customer_phone_number,
+      customer_email,
+      customer_address,
+      customer_city,
+      customer_country,
+      customer_state,
+      lock_phone_number: false,
+      customer_zip_code,
+      apikey: process.env.CINETPAY_APIKEY, // Your CinetPay API key
+      site_id: process.env.CINETPAY_SITE_ID, // Your CinetPay site ID
+      notify_url: process.env.FRONTEND_URL, // URL to receive payment notifications
+      return_url: `${process.env.FRONTEND_URL}`, // URL to redirect user after payment
+      channels: "ALL", // Available payment channels (can be customized)
+    };
+    console.log(cnetpayData.return_url)
 
     try {
-      const session = await stripe.checkout.sessions.create({
-        mode: "payment",
-        success_url: `${process.env.CLIENT_URL}/OnlineShop/PaymentSuccess`,
-        cancel_url: `${process.env.CLIENT_URL}/OnlineShop/PaymentFailed`,
-        line_items: lineItems,
-        shipping_address_collection: {
-          allowed_countries: ["US", "CA", "TG", "NG", "FR", "GH"],
-        },
-        phone_number_collection: {
-          enabled: true,
-        },
-        customer_email: email,
-        payment_method_types: ["card"],
-      });
-
-      // Listen for the checkout.session.completed webhook event
-      stripe.on("checkout.session.completed", async (event) => {
-        const session = event.data;
-        const customerEmail = session.customer_details;
-        console.log(customerEmail);
-      });
-
-      await strapi.service("api::order.order").create({
-        data: {
-          products: products,
-          stripeId: session.id,
-          email: email, // Store the customer email in the order object
-          phone_number: phoneNumber, // Store the customer's phone number in the order object
-        },
-      });
-
-      return { stripeSession: session };
-    } catch (err) {
-      ctx.response.status = 500;
-      return console.log(err);
+          const createdOrder = await strapi.service("api::order.order").create({
+            data: {
+              amount,
+              currency,
+              description,
+              customer_name,
+              customer_surname,
+              customer_phone_number,
+              customer_email,
+              customer_address,
+              customer_city,
+              customer_country,
+              customer_state,
+              lock_phone_number: false,
+              customer_zip_code,
+              transaction_id: cnetpayData.transaction_id,
+              message,
+              cart,
+            },
+          });
+          return ctx.send({
+            message: "Order created successfully!",
+            id: createdOrder.id,
+            // paymentUrl: response.data.data.payment_url,
+            // paymentToken: response.data.data.payment_token,
+            // (Optional) Include initial payment status if desired
+          });
+    } catch (error) {
+      console.error("Error submitting checkout form:", error);
+        return ctx.badRequest({
+          message: "Error submitting checkout form.",
+          error,
+        });
     }
+
+    // Make POST request to CinetPay API
+    // try {
+    //   const response = await axios.post(
+    //     "https://api-checkout.cinetpay.com/v2/payment",
+    //     cnetpayData,
+    //     { headers: { "Content-Type": "application/json" } }
+    //   );
+
+    //   if (response.status === 200) {
+    //     // Success! Create order and redirect user
+    //     await strapi.service("api::order.order").create({
+    //       data: {
+    //         amount,
+    //         currency,
+    //         description,
+    //         customer_name,
+    //         customer_surname,
+    //         customer_phone_number,
+    //         customer_email,
+    //         customer_address,
+    //         customer_city,
+    //         customer_country,
+    //         customer_state,
+    //         lock_phone_number: false,
+    //         customer_zip_code,
+    //         transaction_id: response.data.api_response_id,
+    //         message,
+    //         cart,
+    //       },
+    //     });
+
+       
+    //     return ctx.send({
+    //       message: "Order created successfully!",
+    //       paymentUrl: response.data.data.payment_url,
+    //       paymentToken: response.data.data.payment_token,
+    //        // (Optional) Include initial payment status if desired
+    //     });
+    //   } else {
+    //     // Log detailed response information in case of a 400 error
+    //     console.error("CinetPay API Error:", response.status, response.data);
+
+    //     // Handle error
+    //     return ctx.badRequest({
+    //       message: "Error creating order!",
+    //       error: response.data,
+    //     });
+    //   }
+    // } catch (error) {
+    //   console.error("Error submitting checkout form:", error);
+    //   return ctx.badRequest({
+    //     message: "Error submitting checkout form.",
+    //     error,
+    //   });
+    // }
   },
 }));

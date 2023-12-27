@@ -92,6 +92,31 @@
       "type": "boolean",
       "default": false,
       "required": true
+    },
+    "sub_category": {
+      "type": "enumeration",
+      "enum": [
+        "Underwears",
+        "Swimsuits",
+        "Overalls",
+        "Pants",
+        "Blazers",
+        "Suits",
+        "Shirts",
+        "Uniforms",
+        "Tunics",
+        "Fabrics",
+        "Loincloths",
+        "Home textile",
+        "Bags",
+        "Hats",
+        "Jewelry caps",
+        "Bracelets",
+        "Ties",
+        "Pouches",
+        "Socks"
+      ],
+      "required": true
     }
   }
 }
